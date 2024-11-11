@@ -8,7 +8,7 @@ on:
 
 jobs:
   deno-test:
-    name: Deno Environment Tests
+    name: Deno
     runs-on: ubuntu-latest
 
     steps:
@@ -19,32 +19,5 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Create Deno test
-        run: |
-          mkdir -p tests/environments
-          cat > tests/environments/deno.test.ts << 'EOF'
-          import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-          import { OhImg } from "../../src/index.ts";
-
-          Deno.test("OhImg in Deno environment", async () => {
-            const ohimg = new OhImg({
-              apiKey: "og_live_test",
-              webhookSecret: "og_whsec_test"
-            });
-
-            const url = await ohimg.getImageUrl({
-              path: "/test",
-              domain: "https://example.com"
-            });
-
-            assertEquals(typeof url, "string");
-            assertEquals(url.startsWith("https://og.ohimg.dev"), true);
-            
-            // Test Web Crypto API
-            assertEquals(typeof crypto !== 'undefined', true);
-            assertEquals(typeof crypto.subtle !== 'undefined', true);
-          });
-          EOF
-
-      - name: Run Deno tests
-        run: deno test --allow-net tests/environments/deno.test.ts
+      - name: Run Deno Tests
+        run: deno test tests/deno.test.js --allow-net

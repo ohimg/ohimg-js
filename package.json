@@ -2,32 +2,22 @@
   "name": "ohimg-js",
   "version": "1.0.0",
   "description": "JavaScript SDK for OhImg - Open Graph Image Generator",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "npm run clean && tsc",
-    "prepublish": "npm run build",
-    "test": "jest",
-    "test:watch": "jest --watch"
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
   },
-  "keywords": [
-    "og-image",
-    "open-graph",
-    "image-generation"
-  ],
-  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:node": "node --test tests/node.test.js",
+    "test:browser": "playwright test",
+    "test:deno": "deno test tests/deno.test.js",
+    "test:cloudflare": "wrangler dev tests/worker.test.js --test"
+  },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/node": "^18.0.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.0.0",
     "@playwright/test": "^1.42.0",
-    "@cloudflare/workers-types": "^4.20240208.0",
+    "http-server": "^14.1.1",
+    "playwright": "^1.42.0",
     "wrangler": "^3.28.2"
   }
 }

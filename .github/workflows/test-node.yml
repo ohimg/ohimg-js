@@ -1,4 +1,4 @@
-name: Test Suite
+name: Node.js Tests
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    name: Node.js Tests
+  node-test:
+    name: Node.js
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,5 +24,4 @@ jobs:
           cache: "npm"
 
       - run: npm ci
-      - run: npm run build
       - run: npm test

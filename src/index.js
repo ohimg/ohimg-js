@@ -1,25 +1,5 @@
-// src/index.ts
-
-// Import Node.js crypto for Node environment
-import * as nodeCrypto from "crypto";
-
-interface OhImgConfig {
-  apiKey: string;
-  webhookSecret: string;
-  baseUrl?: string;
-}
-
-interface SignatureInput {
-  path: string;
-  domain: string;
-}
-
 export class OhImg {
-  private apiKey: string;
-  private webhookSecret: string;
-  private baseUrl: string;
-
-  constructor(config: OhImgConfig) {
+  constructor(config) {
     if (!config?.apiKey?.trim()) {
       throw new Error("API key is required");
     }
@@ -32,7 +12,7 @@ export class OhImg {
     this.baseUrl = config.baseUrl?.trim() || "https://og.ohimg.dev";
   }
 
-  async generateSignature(input: SignatureInput) {
+  async generateSignature(input) {
     this.validateInput(input);
 
     const timestamp = Math.floor(Date.now() / 1000);
@@ -48,7 +28,7 @@ export class OhImg {
     };
   }
 
-  async getImageUrl(input: SignatureInput): Promise<string> {
+  async getImageUrl(input) {
     this.validateInput(input);
 
     const { signature, timestamp, fullUrl } = await this.generateSignature(
@@ -65,7 +45,7 @@ export class OhImg {
     return `${this.baseUrl}?${params.toString()}`;
   }
 
-  private validateInput(input: SignatureInput): void {
+  validateInput(input) {
     if (!input) {
       throw new Error("Input is required");
     }
@@ -83,23 +63,20 @@ export class OhImg {
     }
   }
 
-  private async hmac(message: string): Promise<string> {
+  async hmac(message) {
     if (!this.webhookSecret) {
       throw new Error("Webhook secret is required");
     }
 
     // Node.js environment
-    if (
-      typeof process !== "undefined" &&
-      process.versions &&
-      process.versions.node
-    ) {
-      const hmac = nodeCrypto.createHmac("sha256", this.webhookSecret);
+    if (typeof process !== "undefined" && process.versions?.node) {
+      const crypto = await import("crypto");
+      const hmac = crypto.createHmac("sha256", this.webhookSecret);
       hmac.update(message);
       return hmac.digest("base64url");
     }
 
-    // Browser/Deno environment
+    // Browser/Deno/Cloudflare Workers environment
     const encoder = new TextEncoder();
     const keyData = encoder.encode(this.webhookSecret);
     const messageData = encoder.encode(message);
@@ -117,7 +94,7 @@ export class OhImg {
     return this.bufferToBase64Url(signature);
   }
 
-  private bufferToBase64Url(buffer: ArrayBuffer): string {
+  bufferToBase64Url(buffer) {
     // Node.js Buffer
     if (typeof Buffer !== "undefined") {
       return Buffer.from(buffer).toString("base64url");
@@ -130,10 +107,7 @@ export class OhImg {
   }
 }
 
-export async function getOGImageUrl(
-  config: OhImgConfig,
-  input: SignatureInput
-): Promise<string> {
+export const getOGImageUrl = async (config, input) => {
   const ohimg = new OhImg(config);
   return ohimg.getImageUrl(input);
-}
+};

@@ -59,8 +59,7 @@ jobs:
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
           echo "New version: ${NEW_VERSION}"
 
-          # Get the latest commit message (changelog)
-          git log -1 --pretty=%B > release_notes.txt
+          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
 
       - name: Push Changes
         run: |
@@ -68,54 +67,20 @@ jobs:
           git push origin HEAD:main --follow-tags
           echo "Push completed"
 
-      - name: Git Log
-        run: |
-          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD
-          cat release_notes.txt
-
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # echo "Creating GitHub release v${NEW_VERSION}..."
-
-          # echo "Generating release_notes.txt"
-          # git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
-          # echo "Contents of release_notes.txt:"
-          # cat release_notes.txt
-
-          # echo "Using release notes file: release_notes.txt"
-
-          ls -l
-
-          pwd
-
-          echo "-------"
-
-          cat release_notes.txt
-
-          echo "${PWD}/release_notes.txt"
-
-          echo "-------"
-
-          RELEASE_NOTES=$(cat release_notes.txt)
-
-          echo "Using release notes:
-          $RELEASE_NOTES"
-
-          # echo "Use notes -------"
-
-          # gh release create "v${NEW_VERSION}" \
-          #   --title "v${NEW_VERSION}" \
-          #   --notes "$RELEASE_NOTES" \
-          #   --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
-
-          echo "Use notes file -------"
-
-          gh release create "v${NEW_VERSION}" \
-            --title "v${NEW_VERSION}" \
-            --notes-file "${PWD}/release_notes.txt" \
-            --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
+          if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
+            gh release create "v${NEW_VERSION}" \
+              --title "v${NEW_VERSION}" \
+              --notes-file "${PWD}/release_notes.txt" \
+              --prerelease
+          else
+            gh release create "v${NEW_VERSION}" \
+              --title "v${NEW_VERSION}" \
+              --notes-file "${PWD}/release_notes.txt"
+          fi
 
       - name: Publish to NPM
         run: |

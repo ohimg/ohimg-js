@@ -1,0 +1,80 @@
+name: Cloudflare Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cloudflare-test:
+    name: Cloudflare Workers Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm install -D wrangler@latest
+
+      - name: Create Worker test
+        run: |
+          mkdir -p tests/environments
+          cat > tests/environments/worker.test.ts << 'EOF'
+          import { OhImg } from "../../src/index";
+
+          export default {
+            async fetch(request: Request): Promise<Response> {
+              try {
+                // Test Web Crypto API availability
+                if (typeof crypto === 'undefined' || !crypto.subtle) {
+                  throw new Error('Web Crypto API not available');
+                }
+
+                const ohimg = new OhImg({
+                  apiKey: "og_live_test",
+                  webhookSecret: "og_whsec_test"
+                });
+
+                const url = await ohimg.getImageUrl({
+                  path: "/test",
+                  domain: "https://example.com"
+                });
+
+                return new Response(JSON.stringify({
+                  success: true,
+                  url,
+                  hasCrypto: typeof crypto !== 'undefined',
+                  hasSubtle: typeof crypto.subtle !== 'undefined'
+                }), {
+                  headers: { "Content-Type": "application/json" }
+                });
+              } catch (error) {
+                return new Response(JSON.stringify({
+                  success: false,
+                  error: error.message
+                }), { 
+                  status: 500,
+                  headers: { "Content-Type": "application/json" }
+                });
+              }
+            }
+          };
+          EOF
+
+      - name: Create Wrangler config
+        run: |
+          cat > wrangler.toml << 'EOF'
+          name = "ohimg-test"
+          main = "tests/environments/worker.test.ts"
+          compatibility_date = "2024-01-01"
+          EOF
+
+      - name: Test in Wrangler
+        run: npx wrangler dev tests/environments/worker.test.ts --test

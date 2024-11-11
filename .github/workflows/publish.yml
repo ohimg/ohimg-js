@@ -70,7 +70,7 @@ jobs:
 
       - name: Git Log
         run: |
-          ls -l
+          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD
           cat release_notes.txt
 
       - name: Create GitHub Release
@@ -87,6 +87,12 @@ jobs:
           # echo "Using release notes file: release_notes.txt"
 
           ls -l
+
+          echo "-------"
+
+          cat release_notes.txt
+
+          echo "-------"
 
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \

@@ -1,0 +1,18 @@
+{
+  "types": [
+    {"type": "feat", "section": "Features"},
+    {"type": "fix", "section": "Bug Fixes"},
+    {"type": "chore", "section": "Maintenance"},
+    {"type": "docs", "section": "Documentation"},
+    {"type": "style", "section": "Styling"},
+    {"type": "refactor", "section": "Refactors"},
+    {"type": "perf", "section": "Performance"},
+    {"type": "test", "section": "Tests"}
+  ],
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "tagPrefix": "v",
+  "sign": false,
+  "skip": {
+    "changelog": false
+  }
+}

@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }} # Needed for pushing
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Git config
         run: |
@@ -47,26 +47,22 @@ jobs:
       - name: Create Release Commit and Tag
         id: create_release
         run: |
-          # Show current version
           echo "Current version: $(node -p "require('./package.json').version")"
 
-          # Run standard-version (this creates commit and tag)
           if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
             npm run release:${{ github.event.inputs.release-type }}
           else
             npm run release -- --release-as ${{ github.event.inputs.release-type }}
           fi
 
-          # Show new version
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
           echo "New version: ${NEW_VERSION}"
 
-          # Show git status
-          git status
-          git log -1 --pretty=%B
+          # Get the latest commit message (changelog)
+          git log -1 --pretty=%B > release_notes.txt
 
-      - name: Push Changes to Repository
+      - name: Push Changes
         run: |
           echo "Pushing changes to repository..."
           git push origin HEAD:main --follow-tags
@@ -77,9 +73,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Creating GitHub release v${NEW_VERSION}..."
+          if [ -f "CHANGELOG.md" ]; then
+            NOTES_FILE="CHANGELOG.md"
+          else
+            NOTES_FILE="release_notes.txt"
+          fi
+
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
-            --notes-file CHANGELOG.md \
+            --notes-file "$NOTES_FILE" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
       - name: Publish to NPM

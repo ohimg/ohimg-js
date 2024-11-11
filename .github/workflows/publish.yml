@@ -101,10 +101,14 @@ jobs:
           echo "Using release notes:
           $RELEASE_NOTES"
 
+          echo "Use notes -------"
+
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
             --notes "$RELEASE_NOTES" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
+
+          echo "Use notes file -------"
 
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \

@@ -79,8 +79,6 @@ jobs:
         run: |
           echo "Creating GitHub release v${NEW_VERSION}..."
 
-          git log
-
           echo "Generating release_notes.txt"
           git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
           echo "Contents of release_notes.txt:"

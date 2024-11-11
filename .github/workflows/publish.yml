@@ -74,22 +74,16 @@ jobs:
         run: |
           echo "Creating GitHub release v${NEW_VERSION}..."
 
-          if [ -f "CHANGELOG.md" ]; then
-            echo "CHANGELOG.md found, using it for release notes"
-            NOTES_FILE="CHANGELOG.md"
-          else
-            echo "CHANGELOG.md not found, generating release_notes.txt"
-            git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
-            echo "Contents of release_notes.txt:"
-            cat release_notes.txt
-            NOTES_FILE="release_notes.txt"
-          fi
+          echo "Generating release_notes.txt"
+          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
+          echo "Contents of release_notes.txt:"
+          cat release_notes.txt
 
-          echo "Using release notes file: $NOTES_FILE"
+          echo "Using release notes file: release_notes.txt"
 
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
-            --notes-file "${PWD}/$NOTES_FILE" \
+            --notes-file "${PWD}/release_notes.txt" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
       - name: Publish to NPM

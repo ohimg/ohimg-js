@@ -82,9 +82,11 @@ jobs:
           echo "Creating GitHub release v${NEW_VERSION}..."
           git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
 
+          cat release_notes.txt
+
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
-            --notes-file "$NOTES_FILE" \
+            --notes-file "${PWD}/$NOTES_FILE" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
       - name: Publish to NPM

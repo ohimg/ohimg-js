@@ -81,6 +81,8 @@ jobs:
 
           echo "Using release notes file: release_notes.txt"
 
+          ls -l
+
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
             --notes-file "${PWD}/release_notes.txt" \

@@ -3,10 +3,14 @@ import assert from "node:assert/strict";
 import { OhImg } from "../src/index.js";
 
 test("OhImg in Node.js", async (t) => {
+  // Initialize once for all tests
   const ohimg = new OhImg({
     apiKey: "og_live_test",
     webhookSecret: "og_whsec_test",
   });
+
+  // Wait for crypto initialization
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   await t.test("generates valid URL", async () => {
     const url = await ohimg.getImageUrl({
@@ -23,7 +27,7 @@ test("OhImg in Node.js", async (t) => {
 
   await t.test("validates input", async () => {
     await assert.rejects(
-      ohimg.getImageUrl({ path: "", domain: "https://example.com" }),
+      () => ohimg.getImageUrl({ path: "", domain: "https://example.com" }),
       /Path is required/
     );
   });

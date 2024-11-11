@@ -1,3 +1,9 @@
+// Helper to detect Node.js environment
+const isNode =
+  typeof process !== "undefined" &&
+  process.versions != null &&
+  process.versions.node != null;
+
 export class OhImg {
   constructor(config) {
     if (!config?.apiKey?.trim()) {
@@ -10,6 +16,17 @@ export class OhImg {
     this.apiKey = config.apiKey.trim();
     this.webhookSecret = config.webhookSecret.trim();
     this.baseUrl = config.baseUrl?.trim() || "https://og.ohimg.dev";
+
+    // Initialize crypto for Node.js environment
+    if (isNode) {
+      import("node:crypto")
+        .then((crypto) => {
+          this.nodeCrypto = crypto;
+        })
+        .catch(() => {
+          console.warn("Node.js crypto import failed");
+        });
+    }
   }
 
   async generateSignature(input) {
@@ -69,29 +86,37 @@ export class OhImg {
     }
 
     // Node.js environment
-    if (typeof process !== "undefined" && process.versions?.node) {
-      const crypto = await import("crypto");
-      const hmac = crypto.createHmac("sha256", this.webhookSecret);
+    if (isNode) {
+      // Wait for crypto to be initialized if needed
+      if (!this.nodeCrypto) {
+        this.nodeCrypto = await import("node:crypto");
+      }
+
+      const hmac = this.nodeCrypto.createHmac("sha256", this.webhookSecret);
       hmac.update(message);
       return hmac.digest("base64url");
     }
 
-    // Browser/Deno/Cloudflare Workers environment
-    const encoder = new TextEncoder();
-    const keyData = encoder.encode(this.webhookSecret);
-    const messageData = encoder.encode(message);
+    // Web Crypto API for browsers/Deno/Cloudflare Workers
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+      const encoder = new TextEncoder();
+      const keyData = encoder.encode(this.webhookSecret);
+      const messageData = encoder.encode(message);
 
-    const key = await crypto.subtle.importKey(
-      "raw",
-      keyData,
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
+      const key = await crypto.subtle.importKey(
+        "raw",
+        keyData,
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+      );
 
-    const signature = await crypto.subtle.sign("HMAC", key, messageData);
+      const signature = await crypto.subtle.sign("HMAC", key, messageData);
 
-    return this.bufferToBase64Url(signature);
+      return this.bufferToBase64Url(signature);
+    }
+
+    throw new Error("No crypto implementation available");
   }
 
   bufferToBase64Url(buffer) {
@@ -100,7 +125,7 @@ export class OhImg {
       return Buffer.from(buffer).toString("base64url");
     }
 
-    // Browser/Deno
+    // Browser/Deno/Cloudflare
     const bytes = new Uint8Array(buffer);
     const base64 = btoa(String.fromCharCode(...bytes));
     return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");

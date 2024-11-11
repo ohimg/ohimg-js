@@ -24,9 +24,11 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }} # Needed for pushing
 
       - name: Git config
         run: |
@@ -42,32 +44,47 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Create release based on input type
-      - name: Create Release
+      - name: Create Release Commit and Tag
+        id: create_release
         run: |
+          # Show current version
+          echo "Current version: $(node -p "require('./package.json').version")"
+
+          # Run standard-version (this creates commit and tag)
           if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
             npm run release:${{ github.event.inputs.release-type }}
           else
             npm run release -- --release-as ${{ github.event.inputs.release-type }}
           fi
 
-      - name: Push changes
-        run: |
-          git push --follow-tags
+          # Show new version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo "New version: ${NEW_VERSION}"
 
-      # Create GitHub Release
+          # Show git status
+          git status
+          git log -1 --pretty=%B
+
+      - name: Push Changes to Repository
+        run: |
+          echo "Pushing changes to repository..."
+          git push origin HEAD:main --follow-tags
+          echo "Push completed"
+
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG_NAME="v$(node -p "require('./package.json').version")"
-          gh release create $TAG_NAME \
-            --title $TAG_NAME \
+          echo "Creating GitHub release v${NEW_VERSION}..."
+          gh release create "v${NEW_VERSION}" \
+            --title "v${NEW_VERSION}" \
             --notes-file CHANGELOG.md \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
-      # Publish to NPM
       - name: Publish to NPM
-        run: npm publish --access public
+        run: |
+          echo "Publishing version ${NEW_VERSION} to NPM..."
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

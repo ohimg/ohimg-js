@@ -92,6 +92,8 @@ jobs:
 
           cat release_notes.txt
 
+          echo "${PWD}/release_notes.txt"
+
           echo "-------"
 
           RELEASE_NOTES=$(cat release_notes.txt)
@@ -102,6 +104,11 @@ jobs:
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
             --notes "$RELEASE_NOTES" \
+            --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
+
+          gh release create "v${NEW_VERSION}" \
+            --title "v${NEW_VERSION}" \
+            --notes-file "${PWD}/release_notes.txt" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
       - name: Publish to NPM

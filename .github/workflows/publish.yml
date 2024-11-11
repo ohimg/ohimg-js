@@ -88,6 +88,8 @@ jobs:
 
           ls -l
 
+          pwd
+
           echo "-------"
 
           cat release_notes.txt

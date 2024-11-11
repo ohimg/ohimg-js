@@ -59,7 +59,14 @@ jobs:
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
           echo "New version: ${NEW_VERSION}"
 
-          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
+          # Generate the release notes
+          LAST_TAG=$(git describe --tags --abbrev=0)
+          git log --pretty=format:'%h - %s' $LAST_TAG..HEAD > release_notes.md
+
+          echo "## $NEW_VERSION" >> release_notes.md
+          echo "" >> release_notes.md
+
+          git log --pretty=format:'* %s (%an)' $LAST_TAG..HEAD >> release_notes.md
 
       - name: Push Changes
         run: |
@@ -74,12 +81,12 @@ jobs:
           if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
             gh release create "v${NEW_VERSION}" \
               --title "v${NEW_VERSION}" \
-              --notes-file "${PWD}/release_notes.txt" \
+              --notes-file "release_notes.md" \
               --prerelease
           else
             gh release create "v${NEW_VERSION}" \
               --title "v${NEW_VERSION}" \
-              --notes-file "${PWD}/release_notes.txt"
+              --notes-file "release_notes.md"
           fi
 
       - name: Publish to NPM

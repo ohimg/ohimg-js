@@ -1,0 +1,73 @@
+name: Release & Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Release type (major, minor, patch, alpha, beta)"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - alpha
+          - beta
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git config
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Create release based on input type
+      - name: Create Release
+        run: |
+          if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
+            npm run release:${{ github.event.inputs.release-type }}
+          else
+            npm run release -- --release-as ${{ github.event.inputs.release-type }}
+          fi
+
+      - name: Push changes
+        run: |
+          git push --follow-tags
+
+      # Create GitHub Release
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="v$(node -p "require('./package.json').version")"
+          gh release create $TAG_NAME \
+            --title $TAG_NAME \
+            --notes-file CHANGELOG.md \
+            --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
+
+      # Publish to NPM
+      - name: Publish to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

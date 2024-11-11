@@ -12,12 +12,25 @@
     "test:node": "node --test tests/node.test.js",
     "test:browser": "playwright test",
     "test:deno": "deno test tests/deno.test.js",
-    "test:cloudflare": "bun tests/run-worker-test.js"
+    "test:cloudflare": "bun tests/run-worker-test.js",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:alpha": "standard-version --prerelease alpha",
+    "release:beta": "standard-version --prerelease beta"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",
     "http-server": "^14.1.1",
     "playwright": "^1.42.0",
-    "wrangler": "^3.28.2"
+    "wrangler": "^3.28.2",
+    "standard-version": "^9.5.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

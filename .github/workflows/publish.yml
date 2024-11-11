@@ -79,6 +79,9 @@ jobs:
             NOTES_FILE="release_notes.txt"
           fi
 
+          echo "Creating GitHub release v${NEW_VERSION}..."
+          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
+
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
             --notes-file "$NOTES_FILE" \

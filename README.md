@@ -191,4 +191,4 @@ MIT
 
 - GitHub Issues: [Report a bug](https://github.com/yourusername/ohimg-js/issues)
 - Twitter: [@yourhandle](https://twitter.com/yourhandle)
-- Email: support@ohimg.dev
+- Email: rajiv@betalectic.com

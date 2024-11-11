@@ -70,9 +70,8 @@ jobs:
 
       - name: Git Log
         run: |
-          git log > git_log.txt
-          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD
           ls -l
+          cat release_notes.txt
 
       - name: Create GitHub Release
         env:
@@ -93,7 +92,7 @@ jobs:
 
           gh release create "v${NEW_VERSION}" \
             --title "v${NEW_VERSION}" \
-            --notes-file "${PWD}/release_notes.txt" \
+            --notes-file "release_notes.txt" \
             --prerelease ${{ contains(github.event.inputs.release-type, 'alpha') || contains(github.event.inputs.release-type, 'beta') }}
 
       - name: Publish to NPM

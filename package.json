@@ -12,7 +12,7 @@
     "test:node": "node --test tests/node.test.js",
     "test:browser": "playwright test",
     "test:deno": "deno test tests/deno.test.js",
-    "test:cloudflare": "wrangler dev tests/worker.test.js --test"
+    "test:cloudflare": "bun tests/run-worker-test.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",

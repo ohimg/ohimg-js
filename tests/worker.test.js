@@ -1,26 +1,45 @@
 import { OhImg } from "../src/index.js";
 
 export default {
-  async fetch() {
-    const ohimg = new OhImg({
-      apiKey: "og_live_test",
-      webhookSecret: "og_whsec_test",
-    });
-
+  async fetch(request) {
     try {
+      const ohimg = new OhImg({
+        apiKey: "og_live_test",
+        webhookSecret: "og_whsec_test",
+      });
+
       const url = await ohimg.getImageUrl({
         path: "/test",
         domain: "https://example.com",
       });
 
-      return new Response(JSON.stringify({ url }), {
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          url,
+          test: "passed",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
     } catch (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: error.message,
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
     }
   },
 };

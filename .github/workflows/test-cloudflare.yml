@@ -22,15 +22,20 @@ jobs:
 
       - run: npm ci
 
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+
       - name: Create Wrangler Config
         run: |
-          cat > wrangler.toml << 'EOF'
+          cat > wrangler.toml << EOF
           name = "ohimg-test"
           main = "tests/worker.test.js"
           compatibility_date = "2024-01-01"
+          compatibility_flags = ["nodejs_compat"]
+
+          [env.test]
+          name = "ohimg-test-dev"
           EOF
 
-      - name: Run Worker Tests
-        run: |
-          npx wrangler deploy --dry-run tests/worker.test.js
-          npm run test:cloudflare
+      - name: Run Worker Test
+        run: bun tests/run-worker-test.js

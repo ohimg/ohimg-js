@@ -77,14 +77,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Creating GitHub release v${NEW_VERSION}..."
+          # echo "Creating GitHub release v${NEW_VERSION}..."
 
-          echo "Generating release_notes.txt"
-          git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
-          echo "Contents of release_notes.txt:"
-          cat release_notes.txt
+          # echo "Generating release_notes.txt"
+          # git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD > release_notes.txt
+          # echo "Contents of release_notes.txt:"
+          # cat release_notes.txt
 
-          echo "Using release notes file: release_notes.txt"
+          # echo "Using release notes file: release_notes.txt"
 
           ls -l
 

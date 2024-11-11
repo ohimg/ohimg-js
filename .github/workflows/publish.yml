@@ -70,8 +70,9 @@ jobs:
 
       - name: Git Log
         run: |
-          git log
+          git log > git_log.txt
           git log --pretty=format:'%s' $(git describe --tags --abbrev=0)..HEAD
+          ls -l
 
       - name: Create GitHub Release
         env:

@@ -69,11 +69,11 @@ jobs:
           echo "NEW_VERSION_FINAL_TAG: ${NEW_VERSION_FINAL_TAG}"
           echo "PREV_VERSION_FINAL_TAG: ${PREV_VERSION_FINAL_TAG}"
 
-          echo "----- Test 1"
+          # echo "----- Test 1"
 
-          git log --pretty=format:'- %s' $PREV_VERSION_FINAL_TAG..$NEW_VERSION_FINAL_TAG
+          # git log --pretty=format:'- %s' $PREV_VERSION_FINAL_TAG..$NEW_VERSION_FINAL_TAG
 
-          echo "----- Test 2"
+          # echo "----- Test 2"
 
           git log --pretty=format:'- %s' $PREV_VERSION_FINAL_TAG..HEAD > release_notes.md
 

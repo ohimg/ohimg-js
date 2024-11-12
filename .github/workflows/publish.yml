@@ -69,6 +69,8 @@ jobs:
           echo "NEW_VERSION_FINAL_TAG: ${NEW_VERSION_FINAL_TAG}"
           echo "PREV_VERSION_FINAL_TAG: ${PREV_VERSION_FINAL_TAG}"
 
+          git log --pretty=format:'- %s' $NEW_VERSION_FINAL_TAG..$PREV_VERSION_FINAL_TAG
+
           git log --pretty=format:'- %s' $LAST_TAG..HEAD > release_notes.md
 
       - name: Push Changes

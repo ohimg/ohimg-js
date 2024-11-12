@@ -5,8 +5,8 @@ import { OhImg } from "../src/index.js";
 test("OhImg in Node.js", async (t) => {
   // Initialize once for all tests
   const ohimg = new OhImg({
-    publishableKey: "og_live_test",
-    webhookSecret: "og_whsec_test",
+    publishableKey: "omg_pub_test",
+    webhookSecret: "omg_whsec_test",
   });
 
   // Wait for crypto initialization
@@ -20,7 +20,7 @@ test("OhImg in Node.js", async (t) => {
 
     assert.equal(typeof url, "string");
     assert.ok(url.startsWith("https://og.ohimg.dev"));
-    assert.match(url, /key=og_live_test/);
+    assert.match(url, /key=omg_pub_test/);
     assert.match(url, /t=\d+/);
     assert.match(url, /sign=[A-Za-z0-9_-]+/);
   });

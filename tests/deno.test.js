@@ -3,8 +3,8 @@ import { OhImg } from "../src/index.js";
 
 Deno.test("OhImg in Deno", async () => {
   const ohimg = new OhImg({
-    publishableKey: "og_live_test",
-    webhookSecret: "og_whsec_test",
+    publishableKey: "omg_pub_test",
+    webhookSecret: "omg_whsec_test",
   });
 
   const url = await ohimg.getImageUrl({

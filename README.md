@@ -26,8 +26,8 @@ pnpm add ohimg-js
 import { OhImg } from "ohimg-js";
 
 const ohimg = new OhImg({
-  publishableKey: "og_live_xxxx", // Your OhImg API key
-  webhookSecret: "og_whsec_xxxx", // Your OhImg webhook secret
+  publishableKey: "omg_pub_xxxx", // Your OhImg API key
+  webhookSecret: "omg_whsec_xxxx", // Your OhImg webhook secret
 });
 
 const ogImageUrl = await ohimg.getImageUrl({
@@ -139,8 +139,8 @@ import { getOGImageUrl } from "ohimg-js";
 
 const ogImageUrl = await getOGImageUrl(
   {
-    publishableKey: "og_live_xxxx",
-    webhookSecret: "og_whsec_xxxx",
+    publishableKey: "omg_pub_xxxx",
+    webhookSecret: "omg_whsec_xxxx",
   },
   {
     path: "/about",
@@ -152,8 +152,8 @@ const ogImageUrl = await getOGImageUrl(
 ## Environment Variables
 
 ```env
-OHIMG_API_KEY=og_live_xxxx
-OHIMG_WEBHOOK_SECRET=og_whsec_xxxx
+OHIMG_API_KEY=omg_pub_xxxx
+OHIMG_WEBHOOK_SECRET=omg_whsec_xxxx
 ```
 
 ## Security
@@ -180,7 +180,7 @@ Common errors:
 
 // API key and webhook secret required
 ❌ new OhImg({ publishableKey: '' })
-✅ new OhImg({ publishableKey: 'og_live_xxx', webhookSecret: 'og_whsec_xxx' })
+✅ new OhImg({ publishableKey: 'omg_pub_xxx', webhookSecret: 'omg_whsec_xxx' })
 ```
 
 ## License

@@ -7,8 +7,8 @@ test("OhImg in browser", async ({ page }) => {
     const { OhImg } = await import("../src/index.js");
 
     const ohimg = new OhImg({
-      publishableKey: "og_live_test",
-      webhookSecret: "og_whsec_test",
+      publishableKey: "omg_pub_test",
+      webhookSecret: "omg_whsec_test",
     });
 
     return ohimg.getImageUrl({
@@ -19,5 +19,5 @@ test("OhImg in browser", async ({ page }) => {
 
   expect(typeof result).toBe("string");
   expect(result).toMatch(/^https:\/\/og\.ohimg\.dev/);
-  expect(result).toMatch(/key=og_live_test/);
+  expect(result).toMatch(/key=omg_pub_test/);
 });

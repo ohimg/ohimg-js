@@ -61,6 +61,7 @@ jobs:
 
           # Generate the release notes
           LAST_TAG=$(git describe --tags --abbrev=0)
+          echo "LAST_TAG: ${LAST_TAG}"
           git log --pretty=format:'- %s' $LAST_TAG..HEAD > release_notes.md
 
       - name: Push Changes

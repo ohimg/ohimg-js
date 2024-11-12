@@ -47,7 +47,8 @@ jobs:
       - name: Create Release Commit and Tag
         id: create_release
         run: |
-          echo "Current version: $(node -p "require('./package.json').version")"
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: ${CURRENT_VERSION}"
 
           if [[ "${{ github.event.inputs.release-type }}" == "alpha" || "${{ github.event.inputs.release-type }}" == "beta" ]]; then
             npm run release:${{ github.event.inputs.release-type }}
@@ -62,6 +63,12 @@ jobs:
           # Generate the release notes
           LAST_TAG=$(git describe --tags --abbrev=0)
           echo "LAST_TAG: ${LAST_TAG}"
+          NEW_VERSION_FINAL_TAG="v${NEW_VERSION}"
+          PREV_VERSION_FINAL_TAG="v${CURRENT_VERSION}"
+
+          echo "NEW_VERSION_FINAL_TAG: ${NEW_VERSION_FINAL_TAG}"
+          echo "PREV_VERSION_FINAL_TAG: ${PREV_VERSION_FINAL_TAG}"
+
           git log --pretty=format:'- %s' $LAST_TAG..HEAD > release_notes.md
 
       - name: Push Changes

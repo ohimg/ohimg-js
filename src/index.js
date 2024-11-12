@@ -6,14 +6,14 @@ const isNode =
 
 export class OhImg {
   constructor(config) {
-    if (!config?.apiKey?.trim()) {
-      throw new Error("API key is required");
+    if (!config?.publishableKey?.trim()) {
+      throw new Error("Publishable key is required");
     }
     if (!config?.webhookSecret?.trim()) {
       throw new Error("Webhook secret is required");
     }
 
-    this.apiKey = config.apiKey.trim();
+    this.publishableKey = config.publishableKey.trim();
     this.webhookSecret = config.webhookSecret.trim();
     this.baseUrl = config.baseUrl?.trim() || "https://og.ohimg.dev";
 
@@ -35,7 +35,7 @@ export class OhImg {
     const timestamp = Math.floor(Date.now() / 1000);
     const fullUrl = `${input.domain}${input.path}`;
 
-    const payload = `${timestamp}.${this.apiKey}.${fullUrl}`;
+    const payload = `${timestamp}.${this.publishableKey}.${fullUrl}`;
     const signature = await this.hmac(payload);
 
     return {
@@ -56,7 +56,7 @@ export class OhImg {
       url: fullUrl,
       t: timestamp.toString(),
       sign: signature,
-      key: this.apiKey,
+      key: this.publishableKey,
     });
 
     return `${this.baseUrl}?${params.toString()}`;

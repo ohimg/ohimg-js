@@ -5,7 +5,7 @@ import { OhImg } from "../src/index.js";
 test("OhImg in Node.js", async (t) => {
   // Initialize once for all tests
   const ohimg = new OhImg({
-    apiKey: "og_live_test",
+    publishableKey: "og_live_test",
     webhookSecret: "og_whsec_test",
   });
 

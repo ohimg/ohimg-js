@@ -26,7 +26,7 @@ pnpm add ohimg-js
 import { OhImg } from "ohimg-js";
 
 const ohimg = new OhImg({
-  apiKey: "og_live_xxxx", // Your OhImg API key
+  publishableKey: "og_live_xxxx", // Your OhImg API key
   webhookSecret: "og_whsec_xxxx", // Your OhImg webhook secret
 });
 
@@ -55,7 +55,7 @@ export default function BlogPost({ ogImageUrl }) {
 
 export async function getStaticProps({ params }) {
   const ohimg = new OhImg({
-    apiKey: process.env.OHIMG_API_KEY!,
+    publishableKey: process.env.OHIMG_API_KEY!,
     webhookSecret: process.env.OHIMG_WEBHOOK_SECRET!,
   });
 
@@ -77,7 +77,7 @@ export async function getStaticProps({ params }) {
 import { OhImg } from 'ohimg-js';
 
 const ohimg = new OhImg({
-  apiKey: import.meta.env.OHIMG_API_KEY,
+  publishableKey: import.meta.env.OHIMG_API_KEY,
   webhookSecret: import.meta.env.OHIMG_WEBHOOK_SECRET
 });
 
@@ -96,7 +96,7 @@ const ogImageUrl = await ohimg.getImageUrl({
 
 ```typescript
 const ohimg = new OhImg({
-  apiKey: string;        // Required: Your OhImg API key
+  publishableKey: string;        // Required: Your OhImg API key
   webhookSecret: string; // Required: Your OhImg webhook secret
   baseUrl?: string;      // Optional: Custom base URL (default: https://og.ohimg.dev)
 });
@@ -139,7 +139,7 @@ import { getOGImageUrl } from "ohimg-js";
 
 const ogImageUrl = await getOGImageUrl(
   {
-    apiKey: "og_live_xxxx",
+    publishableKey: "og_live_xxxx",
     webhookSecret: "og_whsec_xxxx",
   },
   {
@@ -179,8 +179,8 @@ Common errors:
 ✅ path: '/blog/post'
 
 // API key and webhook secret required
-❌ new OhImg({ apiKey: '' })
-✅ new OhImg({ apiKey: 'og_live_xxx', webhookSecret: 'og_whsec_xxx' })
+❌ new OhImg({ publishableKey: '' })
+✅ new OhImg({ publishableKey: 'og_live_xxx', webhookSecret: 'og_whsec_xxx' })
 ```
 
 ## License

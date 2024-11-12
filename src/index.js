@@ -33,24 +33,45 @@ export class OhImg {
     this.validateInput(input);
 
     const timestamp = Math.floor(Date.now() / 1000);
-    const fullUrl = `${input.domain}${input.path}`;
+    const fullUrl = `${input.pageUrl}`;
 
-    const payload = `${timestamp}.${this.publishableKey}.${fullUrl}`;
+    const encodedOptions = this.encodeImageOptions(input.imageOptions || {});
+
+    const payload = `${timestamp}.${this.publishableKey}.${fullUrl}${encodedOptions}`;
     const signature = await this.hmac(payload);
 
     return {
       signature,
       timestamp,
       fullUrl,
+      encodedOptions,
     };
   }
 
-  async getImageUrl(input) {
+  encodeImageOptions(imageOptions) {
+    if (!imageOptions) return undefined;
+
+    try {
+      // Convert to JSON string and then base64 encode
+      const jsonStr = JSON.stringify(imageOptions);
+
+      // Handle different environments for base64 encoding
+      if (isNode) {
+        return Buffer.from(jsonStr).toString("base64");
+      } else {
+        return btoa(jsonStr);
+      }
+    } catch (error) {
+      console.warn("Failed to encode imageOptions:", error);
+      return undefined;
+    }
+  }
+
+  async getOgImageUrl(input) {
     this.validateInput(input);
 
-    const { signature, timestamp, fullUrl } = await this.generateSignature(
-      input
-    );
+    const { signature, timestamp, fullUrl, encodedOptions } =
+      await this.generateSignature(input);
 
     const params = new URLSearchParams({
       url: fullUrl,
@@ -58,6 +79,10 @@ export class OhImg {
       sign: signature,
       key: this.publishableKey,
     });
+
+    if (encodedOptions) {
+      params.append("opts", encodedOptions);
+    }
 
     return `${this.baseUrl}?${params.toString()}`;
   }
@@ -67,16 +92,12 @@ export class OhImg {
       throw new Error("Input is required");
     }
 
-    if (!input.path?.trim()) {
-      throw new Error("Path is required");
+    if (!input.pageUrl?.trim()) {
+      throw new Error("pageUrl is required");
     }
 
-    if (!input.domain?.trim()) {
-      throw new Error("Domain is required");
-    }
-
-    if (!input.domain.match(/^https?:\/\//)) {
-      throw new Error("Domain must include protocol (http:// or https://)");
+    if (!input.pageUrl.match(/^https?:\/\//)) {
+      throw new Error("pageUrl must include protocol (http:// or https://)");
     }
   }
 
@@ -134,5 +155,5 @@ export class OhImg {
 
 export const getOGImageUrl = async (config, input) => {
   const ohimg = new OhImg(config);
-  return ohimg.getImageUrl(input);
+  return ohimg.getOgImageUrl(input);
 };

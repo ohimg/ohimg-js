@@ -13,9 +13,8 @@ test("OhImg in Node.js", async (t) => {
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   await t.test("generates valid URL", async () => {
-    const url = await ohimg.getImageUrl({
-      path: "/test",
-      domain: "https://example.com",
+    const url = await ohimg.getOgImageUrl({
+      pageUrl: "https://example.com/test",
     });
 
     assert.equal(typeof url, "string");
@@ -27,8 +26,13 @@ test("OhImg in Node.js", async (t) => {
 
   await t.test("validates input", async () => {
     await assert.rejects(
-      () => ohimg.getImageUrl({ path: "", domain: "https://example.com" }),
-      /Path is required/
+      () => ohimg.getOgImageUrl({ pageUrl: "" }),
+      /pageUrl is required/
+    );
+
+    await assert.rejects(
+      () => ohimg.getOgImageUrl({ pageUrl: "example.com/test" }),
+      /pageUrl must include protocol/
     );
   });
 });

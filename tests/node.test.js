@@ -6,7 +6,7 @@ test("OhImg in Node.js", async (t) => {
   // Initialize once for all tests
   const ohimg = new OhImg({
     publishableKey: "omg_pub_test",
-    publishableSecret: "omg_whsec_test",
+    signatureSecret: "omg_whsec_test",
   });
 
   // Wait for crypto initialization

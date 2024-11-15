@@ -27,7 +27,7 @@ import { OhImg } from "ohimg-js";
 
 const ohimg = new OhImg({
   publishableKey: "omg_pub_xxxx", // Your OhImg API key
-  publishableSecret: "omg_whsec_xxxx", // Your OhImg webhook secret
+  signatureSecret: "omg_whsec_xxxx", // Your OhImg Signature secret
 });
 
 const ogImageUrl = await ohimg.getImageUrl({
@@ -56,7 +56,7 @@ export default function BlogPost({ ogImageUrl }) {
 export async function getStaticProps({ params }) {
   const ohimg = new OhImg({
     publishableKey: process.env.OHIMG_API_KEY!,
-    publishableSecret: process.env.OHIMG_WEBHOOK_SECRET!,
+    signatureSecret: process.env.OHIMG_WEBHOOK_SECRET!,
   });
 
   const ogImageUrl = await ohimg.getImageUrl({
@@ -78,7 +78,7 @@ import { OhImg } from 'ohimg-js';
 
 const ohimg = new OhImg({
   publishableKey: import.meta.env.OHIMG_API_KEY,
-  publishableSecret: import.meta.env.OHIMG_WEBHOOK_SECRET
+  signatureSecret: import.meta.env.OHIMG_WEBHOOK_SECRET
 });
 
 const ogImageUrl = await ohimg.getImageUrl({
@@ -97,7 +97,7 @@ const ogImageUrl = await ohimg.getImageUrl({
 ```typescript
 const ohimg = new OhImg({
   publishableKey: string;        // Required: Your OhImg API key
-  publishableSecret: string; // Required: Your OhImg webhook secret
+  signatureSecret: string; // Required: Your OhImg Signature secret
   baseUrl?: string;      // Optional: Custom base URL (default: https://og.ohimg.dev)
 });
 ```
@@ -140,7 +140,7 @@ import { getOGImageUrl } from "ohimg-js";
 const ogImageUrl = await getOGImageUrl(
   {
     publishableKey: "omg_pub_xxxx",
-    publishableSecret: "omg_whsec_xxxx",
+    signatureSecret: "omg_whsec_xxxx",
   },
   {
     path: "/about",
@@ -178,9 +178,9 @@ Common errors:
 ❌ path: 'blog/post'
 ✅ path: '/blog/post'
 
-// API key and webhook secret required
+// API key and Signature secret required
 ❌ new OhImg({ publishableKey: '' })
-✅ new OhImg({ publishableKey: 'omg_pub_xxx', publishableSecret: 'omg_whsec_xxx' })
+✅ new OhImg({ publishableKey: 'omg_pub_xxx', signatureSecret: 'omg_whsec_xxx' })
 ```
 
 ## License

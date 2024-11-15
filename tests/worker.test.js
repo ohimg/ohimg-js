@@ -5,7 +5,7 @@ export default {
     try {
       const ohimg = new OhImg({
         publishableKey: "omg_pub_test",
-        publishableSecret: "omg_whsec_test",
+        signatureSecret: "omg_whsec_test",
       });
 
       const url = await ohimg.getImageUrl({

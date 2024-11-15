@@ -8,7 +8,7 @@ test("OhImg in browser", async ({ page }) => {
 
     const ohimg = new OhImg({
       publishableKey: "omg_pub_test",
-      publishableSecret: "omg_whsec_test",
+      signatureSecret: "omg_whsec_test",
     });
 
     return ohimg.getImageUrl({

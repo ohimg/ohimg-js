@@ -9,12 +9,12 @@ export class OhImg {
     if (!config?.publishableKey?.trim()) {
       throw new Error("Publishable key is required");
     }
-    if (!config?.webhookSecret?.trim()) {
+    if (!config?.publishableSecret?.trim()) {
       throw new Error("Webhook secret is required");
     }
 
     this.publishableKey = config.publishableKey.trim();
-    this.webhookSecret = config.webhookSecret.trim();
+    this.publishableSecret = config.publishableSecret.trim();
     this.baseUrl = config.baseUrl?.trim() || "https://og.ohimg.dev";
 
     // Initialize crypto for Node.js environment
@@ -102,7 +102,7 @@ export class OhImg {
   }
 
   async hmac(message) {
-    if (!this.webhookSecret) {
+    if (!this.publishableSecret) {
       throw new Error("Webhook secret is required");
     }
 
@@ -113,7 +113,7 @@ export class OhImg {
         this.nodeCrypto = await import("node:crypto");
       }
 
-      const hmac = this.nodeCrypto.createHmac("sha256", this.webhookSecret);
+      const hmac = this.nodeCrypto.createHmac("sha256", this.publishableSecret);
       hmac.update(message);
       return hmac.digest("base64url");
     }
@@ -121,7 +121,7 @@ export class OhImg {
     // Web Crypto API for browsers/Deno/Cloudflare Workers
     if (typeof crypto !== "undefined" && crypto.subtle) {
       const encoder = new TextEncoder();
-      const keyData = encoder.encode(this.webhookSecret);
+      const keyData = encoder.encode(this.publishableSecret);
       const messageData = encoder.encode(message);
 
       const key = await crypto.subtle.importKey(

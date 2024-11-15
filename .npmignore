@@ -1,3 +1,7 @@
 tests/
 .gitignore
 .npmignore
+.github/
+release_notes.md
+CHANGELOG.md
+.versionrc

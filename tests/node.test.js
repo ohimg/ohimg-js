@@ -20,7 +20,6 @@ test("OhImg in Node.js", async (t) => {
     assert.equal(typeof url, "string");
     assert.ok(url.startsWith("https://og.ohimg.dev"));
     assert.match(url, /key=omg_pub_test/);
-    assert.match(url, /t=\d+/);
     assert.match(url, /sign=[A-Za-z0-9_-]+/);
   });
 

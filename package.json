@@ -1,6 +1,6 @@
 {
   "name": "@ohimg/ohimg-js",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "JavaScript SDK for OhImg - Open Graph Image Generator",
   "type": "module",
   "main": "src/index.js",

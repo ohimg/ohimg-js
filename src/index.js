@@ -32,17 +32,15 @@ export class OhImg {
   async generateSignature(input) {
     this.validateInput(input);
 
-    const timestamp = Math.floor(Date.now() / 1000);
     const fullUrl = `${input.pageUrl}`;
 
     const encodedOptions = this.encodeImageOptions(input.imageOptions || {});
 
-    const payload = `${timestamp}.${this.publishableKey}.${fullUrl}${encodedOptions}`;
+    const payload = `${this.publishableKey}.${fullUrl}${encodedOptions}`;
     const signature = await this.hmac(payload);
 
     return {
       signature,
-      timestamp,
       fullUrl,
       encodedOptions,
     };
@@ -70,12 +68,12 @@ export class OhImg {
   async getOgImageUrl(input) {
     this.validateInput(input);
 
-    const { signature, timestamp, fullUrl, encodedOptions } =
-      await this.generateSignature(input);
+    const { signature, fullUrl, encodedOptions } = await this.generateSignature(
+      input
+    );
 
     const params = new URLSearchParams({
       url: fullUrl,
-      t: timestamp.toString(),
       sign: signature,
       key: this.publishableKey,
     });

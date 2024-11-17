@@ -122,7 +122,6 @@ Generate signature components separately.
 ```typescript
 const {
   signature,  // Generated HMAC signature
-  timestamp,  // Unix timestamp
   fullUrl     // Complete URL
 } = await ohimg.generateSignature({
   path: string;   // Required: Path of the page
@@ -160,7 +159,6 @@ OHIMG_WEBHOOK_SECRET=omg_whsec_xxxx
 
 This SDK uses HMAC-SHA256 for request signing with these security features:
 
-- Timestamp-based request validation
 - Domain validation
 - URL tampering prevention
 - Protocol enforcement
